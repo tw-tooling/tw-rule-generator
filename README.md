@@ -21,6 +21,10 @@ Copy to Clipboard: Easily copy the generated rules to the clipboard for use in T
 2. Generate Rule: The tool automatically generates the rule script as you input values.
 3. Copy Rule: Click the "Copy Rule to Clipboard" button to use the rule in your Teeworlds map.
 
+## Python Version
+
+There is also a [Jupyter notebook](tw-rule-generator-gradio.ipynb) version of the tool that can be run locally. It uses the [Gradio](https://gradio.app/) library to create an interface.
+
 ## Acknowledgements
 
 This tool utilizes Bootstrap for styling and JavaScript for its interactive features. It is intended for Teeworlds map creators and enthusiasts looking to enhance their map design process.
