@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rule Generator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom CSS -->
+    <style>
+        pre {
+            background-color: #eee;
+            /* border: 1px solid #999; */
+            padding: 12px;
+        }
+        #copyButton:active {
+            background-color: #aeaeae;
+            border-color: #aeaeae;
+        }
+        label img {
+            width: 1em;
+            height: 1em;
+        }
+    </style>
+</head>
+<body onload="generateRule()">
+    <div class="container mt-5">
+        <h2>Teeworlds Rule Generator</h2>
+        <p>A simple Rule Generator to cover all edges and corners with specific tiles.</p>
+        <form id="ruleForm">
+            <div class="form-group">
+                <label for="rule_name">Rule Name:</label>
+                <input type="text" class="form-control" id="rule_name" value="test" oninput="generateRule()">
+            </div>
+            <div class="form-group">
+                <label for="base_tile"><img src="icons/base_tile.png"> Tile (tile number that gets replaced):</label>
+                <input type="number" class="form-control" id="base_tile" value="1" oninput="generateRule()">
+            </div>
+            <div class="form-group">
+                <label for="border_tile"><img src="icons/border_tile.png"> Border Tile (tile number inserted on flat surfaces):</label>
+                <input type="number" class="form-control" id="border_tile" value="16" oninput="generateRule()">
+            </div>
+            <div class="form-group">
+                <label for="corner_tile_outer"><img src="icons/corner_tile_outer.png"> Corner Tile Outer (tile number inserted when two sides are empty):</label>
+                <input type="number" class="form-control" id="corner_tile_outer" value="32" oninput="generateRule()">
+            </div>
+            <div class="form-group">
+                <label for="corner_tile_inner"><img src="icons/corner_tile_inner.png"> Corner Tile Inner (tile number inserted in concave corners):</label>
+                <input type="number" class="form-control" id="corner_tile_inner" value="48" oninput="generateRule()">
+            </div>
+        </form>
+        <button id="copyButton" class="btn btn-secondary mt-2" onclick="copyToClipboard()">Copy Rule to Clipboard</button>
+        <pre class="mt-3"><code id="ruleOutput"></code></pre>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        function generateRule() {
+            const ruleName = document.getElementById('rule_name').value;
+            const baseTile = document.getElementById('base_tile').value;
+            const borderTile = document.getElementById('border_tile').value;
+            const cornerTileOuter = document.getElementById('corner_tile_outer').value;
+            const cornerTileInner = document.getElementById('corner_tile_inner').value;
+
+            let rule = `[${ruleName}]\nIndex ${baseTile}\nBaseTile\n\n`;
+
+            // Constructing the rule string
+            rule += `#top\nIndex ${borderTile}\nPos 0 -1 EMPTY\nPos 0 1 FULL\n\n`;
+            rule += `#left\nIndex ${borderTile} ROTATE YFLIP\nPos -1 0 EMPTY\nPos 1 0 FULL\n\n`;
+            rule += `#right\nIndex ${borderTile} ROTATE\nPos -1 0 FULL\nPos 1 0 EMPTY\n\n`;
+            rule += `#bottom\nIndex ${borderTile} YFLIP\nPos 0 -1 FULL\nPos 0 1 EMPTY\n\n`;
+
+            rule += `#top_left_outer\nIndex ${cornerTileOuter}\nPos 0 -1 EMPTY\nPos -1 0 EMPTY\nPos 1 0 FULL\nPos 0 1 FULL\n\n`;
+            rule += `#top_right_outer\nIndex ${cornerTileOuter} ROTATE\nPos 0 -1 EMPTY\nPos -1 0 FULL\nPos 1 0 EMPTY\nPos 0 1 FULL\n\n`;
+            rule += `#bottom_left_outer\nIndex ${cornerTileOuter} XFLIP YFLIP ROTATE\nPos 0 -1 FULL\nPos -1 0 EMPTY\nPos 1 0 FULL\nPos 0 1 EMPTY\n\n`;
+            rule += `#bottom_right_outer\nIndex ${cornerTileOuter} XFLIP YFLIP\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 1 0 EMPTY\nPos 0 1 EMPTY\n\n`;
+
+            rule += `#top_left_inner\nIndex ${cornerTileInner}\nPos -1 -1 EMPTY\nPos 1 -1 FULL\nPos -1 1 FULL\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
+            rule += `#top_right_inner\nIndex ${cornerTileInner} ROTATE\nPos -1 -1 FULL\nPos 1 -1 EMPTY\nPos -1 1 FULL\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
+            rule += `#bottom_left_inner\nIndex ${cornerTileInner} XFLIP YFLIP ROTATE\nPos -1 -1 FULL\nPos 1 -1 FULL\nPos -1 1 EMPTY\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
+            rule += `#bottom_right_inner\nIndex ${cornerTileInner} XFLIP YFLIP\nPos -1 -1 FULL\nPos 1 -1 FULL\nPos -1 1 FULL\nPos 1 1 EMPTY\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n`;
+
+            // Display the generated rule
+            document.getElementById('ruleOutput').textContent = rule;
+        }
+
+        function copyToClipboard() {
+            const textToCopy = document.getElementById('ruleOutput').innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // alert('Rule copied to clipboard');
+            }, (err) => {
+                console.error('Error copying text: ', err);
+            });
+        }
+
+    </script>
+
+    <!-- Bootstrap JS and Popper.js (optional) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
