@@ -28,3 +28,8 @@ There is also a [Jupyter notebook](tw-rule-generator-gradio.ipynb) version of th
 ## Acknowledgements
 
 This tool utilizes Bootstrap for styling and JavaScript for its interactive features. It is intended for Teeworlds map creators and enthusiasts looking to enhance their map design process.
+
+### Helpful Rule References
+
+* https://www.teeworlds.com/forum/viewtopic.php?pid=92492
+* https://forum.ddnet.org/viewtopic.php?t=2428
