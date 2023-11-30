@@ -17,9 +17,9 @@ Copy to Clipboard: Easily copy the generated rules to the clipboard for use in T
 
 ## How to Use
 
-Input Parameters: Fill in the form with the desired tile numbers and rule name.
-Generate Rule: The tool automatically generates the rule script as you input values.
-Copy Rule: Click the "Copy Rule to Clipboard" button to use the rule in your Teeworlds map.
+1. Input Parameters: Fill in the form with the desired tile numbers and rule name.
+2. Generate Rule: The tool automatically generates the rule script as you input values.
+3. Copy Rule: Click the "Copy Rule to Clipboard" button to use the rule in your Teeworlds map.
 
 ## Acknowledgements
 
