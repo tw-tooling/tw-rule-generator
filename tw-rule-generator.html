@@ -15,6 +15,12 @@
             background-color: #aeaeae;
             border-color: #aeaeae;
         }
+
+        #name-inputs {
+            display: flex;
+            justify-content: space-between;
+        }
+
         .form-group {
             display: flex;
             align-items: center;
@@ -64,13 +70,19 @@
 <body onload="generateRule()">
     <div class="container mt-5">
         <h2>Teeworlds Rule Generator</h2>
-        <p>A simple Rule Generator to cover all edges and corners with specific tiles. More info on <a href="https://github.com/tw-tooling/tw-rule-generator">Github</a>.</p>
+        <p>A simple Rule Generator to cover all edges and corners with specific tiles. Put the resulting file in <code>.../data/editor/automap</code> and restart Teeworlds. More info on <a href="https://github.com/tw-tooling/tw-rule-generator">Github</a>.</p>
         <form id="ruleForm">
             <div class="form-group">
                 <img src="icons/tee_name.png" alt="Name">
-                <div>
-                    <label for="rule_name" class="form-label">Rule Name:</label>
-                    <input type="text" class="form-control" id="rule_name_input" value="test" oninput="generateRule()">
+                <div id="name-inputs">
+                    <div>
+                        <label for="rule_name" class="form-label">Rule Name:</label>
+                        <input type="text" class="form-control" id="rule_name_input" value="test" oninput="generateRule()">
+                    </div>
+                    <div>
+                        <label for="rule_name" class="form-label">Tileset Name:</label>
+                        <input type="text" class="form-control" id="tileset_name_input" value="test" oninput="generateRule()">
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -179,7 +191,7 @@
 
         function downloadRule() {
             const textToDownload = document.getElementById('ruleOutput').innerText;
-            const filename = document.getElementById('rule_name_input').value + '.rules';
+            const filename = document.getElementById('tileset_name_input').value + '.rules';
             const element = document.createElement('a');
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(textToDownload));
             element.setAttribute('download', filename);
