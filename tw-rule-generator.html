@@ -15,9 +15,49 @@
             background-color: #aeaeae;
             border-color: #aeaeae;
         }
-        label img {
-            width: 1em;
-            height: 1em;
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group img {
+            margin-right: 10px;
+            height: 100%; /* Adjust as needed */
+        }
+
+        .disableable-tile:hover {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .disableable-tile:active {
+            opacity: 0.5;
+        }
+
+        .disableable-tile.disabled {
+            filter: grayscale(100%);
+        }
+
+        label.disabled {
+            color: #999;
+        }
+
+        .form-group div {
+            flex-grow: 1;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-label {
+            margin-bottom: 5px;
+            display: block;
         }
     </style>
 </head>
@@ -27,24 +67,46 @@
         <p>A simple Rule Generator to cover all edges and corners with specific tiles. More info on <a href="https://github.com/tw-tooling/tw-rule-generator">Github</a>.</p>
         <form id="ruleForm">
             <div class="form-group">
-                <label for="rule_name">Rule Name:</label>
-                <input type="text" class="form-control" id="rule_name" value="test" oninput="generateRule()">
+                <img src="icons/tee_name.png" alt="Name">
+                <div>
+                    <label for="rule_name" class="form-label">Rule Name:</label>
+                    <input type="text" class="form-control" id="rule_name_input" value="test" oninput="generateRule()">
+                </div>
             </div>
             <div class="form-group">
-                <label for="base_tile"><img src="icons/base_tile.png"> Tile (tile number that gets replaced):</label>
-                <input type="number" class="form-control" id="base_tile" value="1" oninput="generateRule()">
+                <img id="base_tile_img" src="icons/base_tile.png" alt="Base Tile">
+                <div>
+                    <label for="base_tile" class="form-label">Tile (tile number that gets replaced):</label>
+                    <input type="number" class="form-control" id="base_tile_input" value="1" oninput="generateRule()">
+                </div>
             </div>
             <div class="form-group">
-                <label for="border_tile"><img src="icons/border_tile.png"> Border Tile (tile number inserted on flat surfaces):</label>
-                <input type="number" class="form-control" id="border_tile" value="16" oninput="generateRule()">
+                <img id="border_tile_img" class="disableable-tile" src="icons/border_tile.png" alt="Border Tile" onclick="disableRule('border_tile')">
+                <div>
+                    <label for="border_tile" class="form-label">Border Tile (tile number inserted on flat surfaces):</label>
+                    <input type="number" class="form-control" id="border_tile_input" value="16" oninput="generateRule()">
+                </div>
             </div>
             <div class="form-group">
-                <label for="corner_tile_outer"><img src="icons/corner_tile_outer.png"> Corner Tile Outer (tile number inserted when two sides are empty):</label>
-                <input type="number" class="form-control" id="corner_tile_outer" value="32" oninput="generateRule()">
+                <img id="corner_tile_outer_img" class="disableable-tile" src="icons/corner_tile_outer.png" alt="Corner Tile Outer" onclick="disableRule('corner_tile_outer')">
+                <div>
+                    <label for="corner_tile_outer" class="form-label">Corner Tile Outer (tile number inserted when two sides are empty):</label>
+                    <input type="number" class="form-control" id="corner_tile_outer_input" value="32" oninput="generateRule()">
+                </div>
             </div>
             <div class="form-group">
-                <label for="corner_tile_inner"><img src="icons/corner_tile_inner.png"> Corner Tile Inner (tile number inserted in concave corners):</label>
-                <input type="number" class="form-control" id="corner_tile_inner" value="48" oninput="generateRule()">
+                <img id="corner_tile_inner_img" class="disableable-tile" src="icons/corner_tile_inner.png" alt="Corner Tile Inner" onclick="disableRule('corner_tile_inner')">
+                <div>
+                    <label for="corner_tile_inner" class="form-label">Corner Tile Inner (tile number inserted in concave corners):</label>
+                    <input type="number" class="form-control" id="corner_tile_inner_input" value="48" oninput="generateRule()">
+                </div>
+            </div>
+            <div class="form-group">
+                <img id="corner_tile_inlet_img" class="disableable-tile" src="icons/corner_tile_inlet.png" alt="Corner Tile inlet" onclick="disableRule('corner_tile_inlet')">
+                <div>
+                    <label for="corner_tile_inlet" class="form-label">Corner Tile Inlet (tile number inserted in concave corners):</label>
+                    <input type="number" class="form-control" id="corner_tile_inlet_input" value="123" oninput="generateRule()">
+                </div>
             </div>
         </form>
         <button id="copyButton" class="btn btn-secondary mt-2" onclick="copyToClipboard()">Copy Rule to Clipboard</button>
@@ -53,30 +115,53 @@
 
     <!-- JavaScript Logic -->
     <script>
+
+        enabled_tiles = {
+            'border_tile': true,
+            'corner_tile_outer': true,
+            'corner_tile_inner': true,
+            'corner_tile_inlet': true,
+        }
+        disableRule('corner_tile_inlet')
+
         function generateRule() {
-            const ruleName = document.getElementById('rule_name').value;
-            const baseTile = document.getElementById('base_tile').value;
-            const borderTile = document.getElementById('border_tile').value;
-            const cornerTileOuter = document.getElementById('corner_tile_outer').value;
-            const cornerTileInner = document.getElementById('corner_tile_inner').value;
+            const ruleName = document.getElementById('rule_name_input').value;
+            const baseTile = document.getElementById('base_tile_input').value;
+            const borderTile = document.getElementById('border_tile_input').value;
+            const cornerTileOuter = document.getElementById('corner_tile_outer_input').value;
+            const cornerTileInner = document.getElementById('corner_tile_inner_input').value;
+            const cornerTileInlet = document.getElementById('corner_tile_inlet_input').value;
 
             let rule = `[${ruleName}]\nIndex ${baseTile}\nBaseTile\n\n`;
 
             // Constructing the rule string
-            rule += `#top\nIndex ${borderTile}\nPos 0 -1 EMPTY\nPos 0 1 FULL\n\n`;
-            rule += `#left\nIndex ${borderTile} ROTATE YFLIP\nPos -1 0 EMPTY\nPos 1 0 FULL\n\n`;
-            rule += `#right\nIndex ${borderTile} ROTATE\nPos -1 0 FULL\nPos 1 0 EMPTY\n\n`;
-            rule += `#bottom\nIndex ${borderTile} YFLIP\nPos 0 -1 FULL\nPos 0 1 EMPTY\n\n`;
+            if (enabled_tiles['border_tile']) {
+                rule += `#top_border\nIndex ${borderTile}\nPos 0 -1 EMPTY\nPos 0 1 FULL\n\n`;
+                rule += `#left_border\nIndex ${borderTile} ROTATE YFLIP\nPos -1 0 EMPTY\nPos 1 0 FULL\n\n`;
+                rule += `#right_border\nIndex ${borderTile} ROTATE\nPos -1 0 FULL\nPos 1 0 EMPTY\n\n`;
+                rule += `#bottom_border\nIndex ${borderTile} YFLIP\nPos 0 -1 FULL\nPos 0 1 EMPTY\n\n`;
+            }
 
-            rule += `#top_left_outer\nIndex ${cornerTileOuter}\nPos 0 -1 EMPTY\nPos -1 0 EMPTY\nPos 1 0 FULL\nPos 0 1 FULL\n\n`;
-            rule += `#top_right_outer\nIndex ${cornerTileOuter} ROTATE\nPos 0 -1 EMPTY\nPos -1 0 FULL\nPos 1 0 EMPTY\nPos 0 1 FULL\n\n`;
-            rule += `#bottom_left_outer\nIndex ${cornerTileOuter} XFLIP YFLIP ROTATE\nPos 0 -1 FULL\nPos -1 0 EMPTY\nPos 1 0 FULL\nPos 0 1 EMPTY\n\n`;
-            rule += `#bottom_right_outer\nIndex ${cornerTileOuter} XFLIP YFLIP\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 1 0 EMPTY\nPos 0 1 EMPTY\n\n`;
+            if (enabled_tiles['corner_tile_outer']) {
+                rule += `#top_left_outer\nIndex ${cornerTileOuter}\nPos 0 -1 EMPTY\nPos -1 0 EMPTY\nPos 1 0 FULL\nPos 0 1 FULL\n\n`;
+                rule += `#top_right_outer\nIndex ${cornerTileOuter} ROTATE\nPos 0 -1 EMPTY\nPos -1 0 FULL\nPos 1 0 EMPTY\nPos 0 1 FULL\n\n`;
+                rule += `#bottom_left_outer\nIndex ${cornerTileOuter} XFLIP YFLIP ROTATE\nPos 0 -1 FULL\nPos -1 0 EMPTY\nPos 1 0 FULL\nPos 0 1 EMPTY\n\n`;
+                rule += `#bottom_right_outer\nIndex ${cornerTileOuter} XFLIP YFLIP\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 1 0 EMPTY\nPos 0 1 EMPTY\n\n`;
+            }
 
-            rule += `#top_left_inner\nIndex ${cornerTileInner}\nPos -1 -1 EMPTY\nPos 1 -1 FULL\nPos -1 1 FULL\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
-            rule += `#top_right_inner\nIndex ${cornerTileInner} ROTATE\nPos -1 -1 FULL\nPos 1 -1 EMPTY\nPos -1 1 FULL\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
-            rule += `#bottom_left_inner\nIndex ${cornerTileInner} XFLIP YFLIP ROTATE\nPos -1 -1 FULL\nPos 1 -1 FULL\nPos -1 1 EMPTY\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
-            rule += `#bottom_right_inner\nIndex ${cornerTileInner} XFLIP YFLIP\nPos -1 -1 FULL\nPos 1 -1 FULL\nPos -1 1 FULL\nPos 1 1 EMPTY\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n`;
+            if (enabled_tiles['corner_tile_inner']) {
+                rule += `#top_left_inner\nIndex ${cornerTileInner}\nPos -1 -1 EMPTY\nPos 1 -1 FULL\nPos -1 1 FULL\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
+                rule += `#top_right_inner\nIndex ${cornerTileInner} ROTATE\nPos -1 -1 FULL\nPos 1 -1 EMPTY\nPos -1 1 FULL\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
+                rule += `#bottom_left_inner\nIndex ${cornerTileInner} XFLIP YFLIP ROTATE\nPos -1 -1 FULL\nPos 1 -1 FULL\nPos -1 1 EMPTY\nPos 1 1 FULL\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
+                rule += `#bottom_right_inner\nIndex ${cornerTileInner} XFLIP YFLIP\nPos -1 -1 FULL\nPos 1 -1 FULL\nPos -1 1 FULL\nPos 1 1 EMPTY\nPos 0 -1 FULL\nPos -1 0 FULL\nPos 0 1 FULL\nPos 1 0 FULL\n\n`;
+            }
+
+            if (enabled_tiles['corner_tile_inlet']) {
+                rule += `#top_left_inlet\nIndex ${cornerTileInlet}\nPos 0 0 EMPTY\nPos 0 -1 FULL\nPos 1 0 EMPTY\nPos 0 1 EMPTY\nPos -1 0 FULL\nPos 0 -1 NOTINDEX -1\nPos -1 0 NOTINDEX -1\n\n`;
+                rule += `#top_right_inlet\nIndex ${cornerTileInlet} ROTATE\nPos 0 0 EMPTY\nPos 0 -1 FULL\nPos 1 0 FULL\nPos 0 1 EMPTY\nPos -1 0 EMPTY\nPos 0 -1 NOTINDEX -1\nPos 1 0 NOTINDEX -1\n\n`;
+                rule += `#bottom_left_inlet\nIndex ${cornerTileInlet} XFLIP YFLIP\nPos 0 0 EMPTY\nPos 0 -1 EMPTY\nPos 1 0 FULL\nPos 0 1 FULL\nPos -1 0 EMPTY\nPos 1 0 NOTINDEX -1\nPos 0 1 NOTINDEX -1\n\n`;
+                rule += `#bottom_right_inlet\nIndex ${cornerTileInlet} ROTATE XFLIP YFLIP\nPos 0 0 EMPTY\nPos 0 -1 EMPTY\nPos 1 0 EMPTY\nPos 0 1 FULL\nPos -1 0 FULL\nPos 0 1 NOTINDEX -1\nPos -1 0 NOTINDEX -1\n\n`;
+            }
 
             // Display the generated rule
             document.getElementById('ruleOutput').textContent = rule;
@@ -89,6 +174,24 @@
             }, (err) => {
                 console.error('Error copying text: ', err);
             });
+        }
+
+        function disableRule(name) {
+            const img = document.getElementById(name + '_img');
+            const label = document.querySelector('label[for="' + name + '"]');
+            const input = document.getElementById(name + '_input');
+            if (enabled_tiles[name]) {
+                img.classList.add('disabled');
+                label.classList.add('disabled');
+                input.disabled = true;
+                enabled_tiles[name] = false;
+            } else {
+                img.classList.remove('disabled');
+                label.classList.remove('disabled');
+                input.disabled = false;
+                enabled_tiles[name] = true;
+            }
+            generateRule();
         }
 
     </script>
