@@ -104,12 +104,13 @@
             <div class="form-group">
                 <img id="corner_tile_inlet_img" class="disableable-tile" src="icons/corner_tile_inlet.png" alt="Corner Tile inlet" onclick="disableRule('corner_tile_inlet')">
                 <div>
-                    <label for="corner_tile_inlet" class="form-label">Corner Tile Inlet (tile number inserted in concave corners):</label>
+                    <label for="corner_tile_inlet" class="form-label">Corner Tile Inlet (tile number inserted next to concave corners):</label>
                     <input type="number" class="form-control" id="corner_tile_inlet_input" value="123" oninput="generateRule()">
                 </div>
             </div>
         </form>
         <button id="copyButton" class="btn btn-secondary mt-2" onclick="copyToClipboard()">Copy Rule to Clipboard</button>
+        <button id="copyButton" class="btn btn-secondary mt-2" onclick="downloadRule()">Download Rule</button>
         <pre class="mt-3"><code id="ruleOutput"></code></pre>
     </div>
 
@@ -164,7 +165,7 @@
             }
 
             // Display the generated rule
-            document.getElementById('ruleOutput').textContent = rule;
+            document.getElementById('ruleOutput').textContent = rule.slice(0, -1);
         }
 
         function copyToClipboard() {
@@ -174,6 +175,18 @@
             }, (err) => {
                 console.error('Error copying text: ', err);
             });
+        }
+
+        function downloadRule() {
+            const textToDownload = document.getElementById('ruleOutput').innerText;
+            const filename = document.getElementById('rule_name_input').value + '.rules';
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(textToDownload));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
         }
 
         function disableRule(name) {
