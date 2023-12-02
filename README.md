@@ -1,6 +1,8 @@
 # Teeworlds Rule Generator
 
-The Teeworlds Rule Generator is a web-based tool designed to create rules for tile replacement in Teeworlds game maps. It offers a simple interface to generate the rules.
+This Teeworlds Rule Generator is a web-based tool designed to create rules for tile replacement in Teeworlds game maps. It offers a simple interface to generate the rules.
+
+URL: https://tw-tooling.github.io/tw-rule-generator/tw-rule-generator.html
 
 
 ## Features
@@ -41,5 +43,6 @@ This tool utilizes Bootstrap for styling and JavaScript for its interactive feat
 
 ### Helpful Rule References
 
-* https://www.teeworlds.com/forum/viewtopic.php?pid=92492
-* https://forum.ddnet.org/viewtopic.php?t=2428
+* Forum Post: https://www.teeworlds.com/forum/viewtopic.php?pid=92492
+* Forum Post: https://forum.ddnet.org/viewtopic.php?t=2428
+* Alternative Windows App with more options: https://github.com/ZonsaC/Teeworlds-Automapper
